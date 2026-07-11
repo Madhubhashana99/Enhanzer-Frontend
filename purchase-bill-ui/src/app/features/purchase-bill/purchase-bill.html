@@ -1,0 +1,284 @@
+<div class="page-container">
+
+  <div class="page-top-bar">
+    <div class="top-bar-left">
+      <div class="info-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      </div>
+      <div class="page-title">
+        <h2>Purchase Bill</h2>
+        <span>Enter Information for the Purchase Bill</span>
+      </div>
+    </div>
+    <div class="top-bar-right">
+      <button class="icon-btn" title="Refresh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M23 4v6h-6"></path>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        </svg>
+      </button>
+      <button class="icon-btn" title="New">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="16"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg>
+      </button>
+      <button class="icon-btn" title="Save" (click)="saveBill()" [disabled]="addedItems.length === 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="9 12 12 15 16 9"></polyline>
+        </svg>
+      </button>
+      <button class="icon-btn" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="main-tabs">
+    <button>Header</button>
+    <button class="active">Details</button>
+    <button>Notes</button>
+    <button>Documents</button>
+  </div>
+
+  <div class="content">
+    <div class="form-container">
+      <div class="sub-tabs">
+        <button class="active">Items</button>
+        <button>Accounts</button>
+        <button>Taxes</button>
+      </div>
+
+      <form [formGroup]="itemForm" (ngSubmit)="addItem()" class="item-form">
+        <div class="form-row">
+          <div class="form-group autocomplete-group" style="flex: 2;">
+            <label class="text-left">Item<span class="text-danger">*</span></label>
+            <div class="input-with-icon">
+              <input type="text" formControlName="item" class="text-left"
+                [class.invalid]="itemForm.get('item')?.invalid && itemForm.get('item')?.touched">
+              <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+            </div>
+            <ul class="autocomplete-list" *ngIf="filteredItems.length > 0">
+              <li *ngFor="let suggestion of filteredItems" (click)="selectItem(suggestion)">
+                {{ suggestion }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="form-group" style="flex: 2;">
+            <label class="text-left">Batch</label>
+            <div class="input-with-icon">
+              <input type="text" formControlName="batch" class="text-left">
+              <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Standard Cost</label>
+            <input type="number" formControlName="standardCost" placeholder="0.00" min="0">
+          </div>
+          <div class="form-group">
+            <label>Standard Price <span class="badge-new">New +</span></label>
+            <input type="number" formControlName="standardPrice" placeholder="0.00" min="0">
+          </div>
+          <div class="form-group">
+            <label>Margin</label>
+            <input type="number" formControlName="margin" placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <label>Qty</label>
+            <input type="number" formControlName="qty" placeholder="0" min="1"
+              [class.invalid]="itemForm.get('qty')?.invalid && itemForm.get('qty')?.touched">
+          </div>
+          <div class="form-group">
+            <label>Free Qty</label>
+            <input type="number" formControlName="freeQty" placeholder="0" min="0">
+          </div>
+        </div>
+
+        <div class="form-row mt-4">
+          <div class="form-group" style="flex: 1.5;">
+            <label class="text-left">Discount</label>
+            <input type="number" formControlName="discount" placeholder="0.00" min="0" max="100">
+          </div>
+          <div class="form-group" style="flex: 1.5;">
+            <label>Total Cost</label>
+            <input type="text" [value]="itemForm.get('totalCost')?.value | number:'1.2-2'" disabled placeholder="0.00">
+          </div>
+          <div class="form-group" style="flex: 1.5;">
+            <label>Total Selling</label>
+            <input type="text" [value]="itemForm.get('totalSelling')?.value | number:'1.2-2'" disabled
+              placeholder="0.00">
+          </div>
+          <div class="form-group align-bottom" style="flex: 5.5;">
+            <button type="submit" class="btn-add">Add +</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Items Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th class="text-left">Item</th>
+              <th class="text-left">Batch</th>
+              <th>Standard Cost</th>
+              <th>Standard Price</th>
+              <th>Margin</th>
+              <th>Qty</th>
+              <th>Free Qty</th>
+              <th>Discount</th>
+              <th>Total Cost</th>
+              <th>Total Selling</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of addedItems; let i = index">
+              <td class="text-left">{{ row.item }}</td>
+              <td class="text-left">{{ row.batch || '-' }}</td>
+              <td>{{ row.standardCost | number:'1.2-2' }}</td>
+              <td>{{ row.standardPrice | number:'1.2-2' }}</td>
+              <td>{{ row.margin | number:'1.2-2' }}</td>
+              <td>{{ row.qty }}</td>
+              <td>{{ row.freeQty }}</td>
+              <td>{{ row.discount | number:'1.2-2' }}</td>
+              <td>{{ row.totalCost | number:'1.2-2' }}</td>
+              <td>{{ row.totalSelling | number:'1.2-2' }}</td>
+              <td><button class="btn-remove" (click)="removeItem(i)">✕</button></td>
+            </tr>
+            <tr *ngIf="addedItems.length === 0">
+              <td colspan="11" class="empty-state">No items added yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Summary Panel -->
+    <div class="summary-container">
+      <div class="summary-card">
+        <h3 class="summary-main-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          Summary
+        </h3>
+
+        <div class="summary-section">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+              </path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            Item Summary
+            <svg class="icon-info-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </h4>
+          <div class="summary-row"><span>Total Items</span><span class="value">{{ totalItemsCount }}</span></div>
+          <div class="summary-row"><span>Total Qty</span><span class="value">{{ totalQuantity }}</span></div>
+        </div>
+
+        <div class="summary-section">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            Financial Summary
+          </h4>
+          <div class="summary-row"><span>Gross Total</span><span class="value">{{ grossTotal | number:'1.2-2' }}</span>
+          </div>
+          <div class="summary-row"><span>Item Discount</span><span class="value">{{ itemDiscount | number:'1.2-2'
+              }}</span></div>
+          <div class="summary-row">
+            <span>Overall Discount <svg class="icon-plus-small" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg></span>
+            <span class="value">{{ overallDiscount | number:'1.2-2' }}</span>
+          </div>
+          <div class="summary-row"><span>Total Discounts</span><span class="value">{{ totalDiscounts | number:'1.2-2'
+              }}</span></div>
+          <div class="summary-row"><span>Total Before Tax</span><span class="value">{{ totalBeforeTax | number:'1.2-2'
+              }}</span></div>
+        </div>
+
+        <div class="summary-section">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+              <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            Tax Summary
+            <svg class="icon-info-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </h4>
+          <div class="summary-row"><span>Total Tax</span><span class="value">0.00</span></div>
+          <div class="summary-row"><span>Suspended Tax</span><span class="value">0.00</span></div>
+        </div>
+
+        <div class="summary-section total-net">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+            Net Total
+          </h4>
+          <div class="net-value">Rs. {{ totalBeforeTax | number:'1.2-2' }}</div>
+        </div>
+
+        <div *ngIf="saveSuccess" class="alert-success">{{ saveSuccess }}</div>
+        <div *ngIf="saveError" class="alert-error">{{ saveError }}</div>
+      </div>
+    </div>
+  </div>
+</div>

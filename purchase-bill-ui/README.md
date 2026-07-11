@@ -1,59 +1,42 @@
-# PurchaseBillUi
+# Enhanzer Frontend - Purchase Bill UI
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.2.
+This is the frontend application for the Enhanzer Purchase Bill module, built with Angular 17+ using Standalone Components.
 
-## Development server
+## Technologies Used
+- Angular (Standalone Components)
+- TypeScript
+- SCSS for styling
+- Reactive Forms
 
-To start a local development server, run:
+## Features
+- **Authentication**: Login page that authenticates against the backend API and stores the JWT token.
+- **Purchase Bill Form**: A fully styled, interactive form to enter purchase bill details, calculate gross totals, taxes, and net totals dynamically.
+- **Auto-complete**: Type-ahead item selection for adding new items.
+- **Real-time Table**: Displays currently added items and all historically saved items fetched from the backend.
 
-```bash
-ng serve
-```
+## Getting Started
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- Angular CLI installed globally (`npm install -g @angular/cli`)
 
-## Code scaffolding
+### Running the Application Locally
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+1. Open a terminal in the project root directory (`purchase-bill-ui`).
+2. Install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   ng serve
+   ```
+4. Navigate to `http://localhost:4200/` in your web browser. The app will automatically reload if you change any of the source files.
 
-```bash
-ng generate component component-name
-```
+## Project Structure Highlights
+- `src/app/core/services/` - Contains services to communicate with the backend (`auth.service.ts`, `location.service.ts`, `purchase-bill.service.ts`).
+- `src/app/features/login/` - The login component and styling.
+- `src/app/features/purchase-bill/` - The main purchase bill form, layout, and logic.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Connecting to Backend
+Ensure that the ASP.NET Core backend is running simultaneously (usually on `https://localhost:7105`) so the Angular frontend can successfully make API requests.
